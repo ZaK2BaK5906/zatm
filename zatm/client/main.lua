@@ -112,10 +112,10 @@ function RobWithLaptop(atmEntity, atmCoords)
 
     if not method.enabled then
         ShowNotification('Cette méthode est désactivée', 'error')
+        isRobbing = false
         return
     end
 
-    isRobbing = true
     local ped = PlayerPedId()
 
     -- Charger animation et prop
@@ -126,7 +126,7 @@ function RobWithLaptop(atmEntity, atmCoords)
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
 
     -- Progressbar
-    if lib.progressBar({
+    local progressCompleted = lib.progressBar({
         duration = method.duration,
         label = 'Hacking de l\'ATM...',
         useWhileDead = false,
@@ -136,7 +136,9 @@ function RobWithLaptop(atmEntity, atmCoords)
             move = true,
             combat = true
         }
-    }) then
+    })
+
+    if progressCompleted then
         -- Skillcheck
         local success = lib.skillCheck(method.skillcheck.difficulty, method.skillcheck.keys)
 
@@ -145,7 +147,7 @@ function RobWithLaptop(atmEntity, atmCoords)
         RemoveProp()
 
         if success then
-            -- Succès
+            -- Succès - Retirer l'item et donner récompense
             TriggerServerEvent('esx_atmrobbery:rewardPlayer', 'laptop', method.rewardMin, method.rewardMax, method.removeItem)
             SetATMCooldown(atmEntity)
 
@@ -156,7 +158,10 @@ function RobWithLaptop(atmEntity, atmCoords)
             end
         else
             ShowNotification(Config.Messages['robbery_failed'], 'error')
-            TriggerServerEvent('esx_atmrobbery:removeItem', method.item, method.removeItem)
+            -- En cas d'échec, retirer quand même l'item si removeItem est true
+            if method.removeItem then
+                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+            end
         end
     else
         -- Annulé
@@ -174,10 +179,10 @@ function RobWithSkimmer(atmEntity, atmCoords)
 
     if not method.enabled then
         ShowNotification('Cette méthode est désactivée', 'error')
+        isRobbing = false
         return
     end
 
-    isRobbing = true
     local ped = PlayerPedId()
 
     -- Charger animation et prop
@@ -188,7 +193,7 @@ function RobWithSkimmer(atmEntity, atmCoords)
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
 
     -- Progressbar
-    if lib.progressBar({
+    local progressCompleted = lib.progressBar({
         duration = method.duration,
         label = 'Installation du skimmer...',
         useWhileDead = false,
@@ -198,7 +203,9 @@ function RobWithSkimmer(atmEntity, atmCoords)
             move = true,
             combat = true
         }
-    }) then
+    })
+
+    if progressCompleted then
         -- Skillcheck
         local success = lib.skillCheck(method.skillcheck.difficulty, method.skillcheck.keys)
 
@@ -218,7 +225,10 @@ function RobWithSkimmer(atmEntity, atmCoords)
             end
         else
             ShowNotification(Config.Messages['robbery_failed'], 'error')
-            TriggerServerEvent('esx_atmrobbery:removeItem', method.item, method.removeItem)
+            -- Le skimmer est perdu même en cas d'échec
+            if method.removeItem then
+                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+            end
         end
     else
         -- Annulé
@@ -236,10 +246,10 @@ function RobWithC4(atmEntity, atmCoords)
 
     if not method.enabled then
         ShowNotification('Cette méthode est désactivée', 'error')
+        isRobbing = false
         return
     end
 
-    isRobbing = true
     local ped = PlayerPedId()
 
     -- Charger animation et prop
@@ -250,7 +260,7 @@ function RobWithC4(atmEntity, atmCoords)
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
 
     -- Progressbar
-    if lib.progressBar({
+    local progressCompleted = lib.progressBar({
         duration = method.duration,
         label = 'Placement du C4...',
         useWhileDead = false,
@@ -260,7 +270,9 @@ function RobWithC4(atmEntity, atmCoords)
             move = true,
             combat = true
         }
-    }) then
+    })
+
+    if progressCompleted then
         -- Skillcheck
         local success = lib.skillCheck(method.skillcheck.difficulty, method.skillcheck.keys)
 
@@ -290,7 +302,10 @@ function RobWithC4(atmEntity, atmCoords)
             SetATMCooldown(atmEntity)
         else
             ShowNotification(Config.Messages['robbery_failed'], 'error')
-            TriggerServerEvent('esx_atmrobbery:removeItem', method.item, method.removeItem)
+            -- Le C4 est perdu même en cas d'échec
+            if method.removeItem then
+                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+            end
         end
     else
         -- Annulé
@@ -308,10 +323,10 @@ function RobWithBlowtorch(atmEntity, atmCoords)
 
     if not method.enabled then
         ShowNotification('Cette méthode est désactivée', 'error')
+        isRobbing = false
         return
     end
 
-    isRobbing = true
     local ped = PlayerPedId()
 
     -- Phase 1: Chalumeau
@@ -320,7 +335,7 @@ function RobWithBlowtorch(atmEntity, atmCoords)
 
     TaskPlayAnim(ped, method.phase1.animation.dict, method.phase1.animation.anim, 8.0, -8.0, -1, method.phase1.animation.flag, 0, false, false, false)
 
-    if lib.progressBar({
+    local phase1Completed = lib.progressBar({
         duration = method.phase1.duration,
         label = 'Découpe au chalumeau...',
         useWhileDead = false,
@@ -330,7 +345,9 @@ function RobWithBlowtorch(atmEntity, atmCoords)
             move = true,
             combat = true
         }
-    }) then
+    })
+
+    if phase1Completed then
         local success1 = lib.skillCheck(method.phase1.skillcheck.difficulty, method.phase1.skillcheck.keys)
 
         ClearPedTasks(ped)
@@ -345,7 +362,7 @@ function RobWithBlowtorch(atmEntity, atmCoords)
 
             TaskPlayAnim(ped, method.phase2.animation.dict, method.phase2.animation.anim, 8.0, -8.0, -1, method.phase2.animation.flag, 0, false, false, false)
 
-            if lib.progressBar({
+            local phase2Completed = lib.progressBar({
                 duration = method.phase2.duration,
                 label = 'Ouverture avec le pied de biche...',
                 useWhileDead = false,
@@ -355,14 +372,16 @@ function RobWithBlowtorch(atmEntity, atmCoords)
                     move = true,
                     combat = true
                 }
-            }) then
+            })
+
+            if phase2Completed then
                 local success2 = lib.skillCheck(method.phase2.skillcheck.difficulty, method.phase2.skillcheck.keys)
 
                 ClearPedTasks(ped)
                 RemoveProp()
 
                 if success2 then
-                    -- Succès
+                    -- Succès des 2 phases
                     TriggerServerEvent('esx_atmrobbery:rewardPlayer', 'blowtorch', method.rewardMin, method.rewardMax, method.removeItem)
                     SetATMCooldown(atmEntity)
 
@@ -373,17 +392,26 @@ function RobWithBlowtorch(atmEntity, atmCoords)
                     end
                 else
                     ShowNotification(Config.Messages['robbery_failed'], 'error')
+                    -- Échec phase 2
+                    if method.removeItem then
+                        TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+                    end
                 end
             else
+                -- Phase 2 annulée
                 ClearPedTasks(ped)
                 RemoveProp()
                 ShowNotification(Config.Messages['robbery_cancelled'], 'error')
             end
         else
+            -- Échec phase 1
             ShowNotification(Config.Messages['robbery_failed'], 'error')
-            TriggerServerEvent('esx_atmrobbery:removeItem', method.item, method.removeItem)
+            if method.removeItem then
+                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+            end
         end
     else
+        -- Phase 1 annulée
         ClearPedTasks(ped)
         RemoveProp()
         ShowNotification(Config.Messages['robbery_cancelled'], 'error')
@@ -398,10 +426,10 @@ function RobWithDrill(atmEntity, atmCoords)
 
     if not method.enabled then
         ShowNotification('Cette méthode est désactivée', 'error')
+        isRobbing = false
         return
     end
 
-    isRobbing = true
     local ped = PlayerPedId()
 
     -- Charger animation et prop
@@ -411,14 +439,8 @@ function RobWithDrill(atmEntity, atmCoords)
     -- Jouer animation
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
 
-    -- Son de perceuse
-    if method.sound.enabled then
-        -- Note: Le son peut ne pas fonctionner si le soundset n'est pas chargé
-        -- Vous pouvez utiliser un soundId personnalisé ou le désactiver
-    end
-
     -- Progressbar
-    if lib.progressBar({
+    local progressCompleted = lib.progressBar({
         duration = method.duration,
         label = 'Perçage de l\'ATM...',
         useWhileDead = false,
@@ -428,7 +450,9 @@ function RobWithDrill(atmEntity, atmCoords)
             move = true,
             combat = true
         }
-    }) then
+    })
+
+    if progressCompleted then
         -- Skillcheck (plusieurs phases)
         local success = lib.skillCheck(method.skillcheck.difficulty, method.skillcheck.keys)
 
@@ -448,7 +472,9 @@ function RobWithDrill(atmEntity, atmCoords)
             end
         else
             ShowNotification(Config.Messages['robbery_failed'], 'error')
-            TriggerServerEvent('esx_atmrobbery:removeItem', method.item, method.removeItem)
+            if method.removeItem then
+                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+            end
         end
     else
         -- Annulé
@@ -485,7 +511,10 @@ function OpenRobberyMenu(atmEntity, atmCoords)
                 onSelect = function()
                     ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
                         if canRob then
+                            isRobbing = true
                             RobWithLaptop(atmEntity, atmCoords)
+                        else
+                            isRobbing = false
                         end
                     end, 'laptop')
                 end
@@ -501,7 +530,10 @@ function OpenRobberyMenu(atmEntity, atmCoords)
                 onSelect = function()
                     ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
                         if canRob then
+                            isRobbing = true
                             RobWithSkimmer(atmEntity, atmCoords)
+                        else
+                            isRobbing = false
                         end
                     end, 'skimmer')
                 end
@@ -517,7 +549,10 @@ function OpenRobberyMenu(atmEntity, atmCoords)
                 onSelect = function()
                     ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
                         if canRob then
+                            isRobbing = true
                             RobWithC4(atmEntity, atmCoords)
+                        else
+                            isRobbing = false
                         end
                     end, 'c4')
                 end
@@ -533,7 +568,10 @@ function OpenRobberyMenu(atmEntity, atmCoords)
                 onSelect = function()
                     ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
                         if canRob then
+                            isRobbing = true
                             RobWithBlowtorch(atmEntity, atmCoords)
+                        else
+                            isRobbing = false
                         end
                     end, 'blowtorch')
                 end
@@ -549,7 +587,10 @@ function OpenRobberyMenu(atmEntity, atmCoords)
                 onSelect = function()
                     ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
                         if canRob then
+                            isRobbing = true
                             RobWithDrill(atmEntity, atmCoords)
+                        else
+                            isRobbing = false
                         end
                     end, 'drill')
                 end

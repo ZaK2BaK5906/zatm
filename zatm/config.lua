@@ -30,12 +30,12 @@ Config.Methods = {
         animation = {
             dict = 'anim@heists@prison_heistunfinished_biztarget_idle',
             anim = 'hack_loop',
-            flag = 49
+            flag = 16 -- Flag 16 permet l'animation répétée et le mouvement des mains
         },
         prop = {
             model = 'prop_laptop_01a',
             bone = 60309, -- IK_R_Hand
-            offset = {x = 0.03, y = 0.0, z = 0.0, rotX = 0.0, rotY = 0.0, rotZ = 0.0}
+            offset = {x = 0.01, y = 0.02, z = 0.0, rotX = 10.0, rotY = 160.0, rotZ = 0.0}
         },
 
         -- Minijeu ox_lib
@@ -132,10 +132,10 @@ Config.Methods = {
         explosion = {
             enabled = true,
             explosionType = 2, -- Type d'explosion
-            damageScale = 0.5,
+            damageScale = 2.0, -- Dégâts augmentés
             isAudible = true,
             isInvisible = false,
-            cameraShake = 1.0
+            cameraShake = 2.5 -- Secousse de caméra augmentée
         },
 
         -- Récompenses
@@ -228,7 +228,7 @@ Config.Methods = {
         prop = {
             model = 'hei_prop_heist_drill',
             bone = 28422,
-            offset = {x = 0.0, y = 0.05, z = 0.0, rotX = 0.0, rotY = 90.0, rotZ = 90.0}
+            offset = {x = 0.14, y = 0.0, z = 0.03, rotX = 90.0, rotY = 0.0, rotZ = 0.0} -- Mèche vers l'avant
         },
 
         -- Minijeu ox_lib (plusieurs phases)

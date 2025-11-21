@@ -134,7 +134,7 @@ CreateThread(function()
             xPlayer.getName(), xPlayer.identifier, method, reward))
     end)
 
-    -- Event: Retirer un item (en cas d'échec) - ox_inventory
+    -- Event: Retirer un item (en cas d'échec) - ox_inventory (OLD - deprecated)
     RegisterNetEvent('esx_atmrobbery:removeItem')
     AddEventHandler('esx_atmrobbery:removeItem', function(itemName, shouldRemove)
         local _source = source
@@ -142,6 +142,17 @@ CreateThread(function()
         if not shouldRemove then return end
 
         exports.ox_inventory:RemoveItem(_source, itemName, 1)
+    end)
+
+    -- Event: Retirer un item uniquement (sans condition) - ox_inventory
+    RegisterNetEvent('esx_atmrobbery:removeItemOnly')
+    AddEventHandler('esx_atmrobbery:removeItemOnly', function(itemName)
+        local _source = source
+
+        if not itemName then return end
+
+        exports.ox_inventory:RemoveItem(_source, itemName, 1)
+        print(string.format('[ZATM ATM ROBBERY] Item %s retiré du joueur %s', itemName, _source))
     end)
 
     -- Event: Alerter la police
