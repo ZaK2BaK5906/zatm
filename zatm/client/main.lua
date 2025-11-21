@@ -420,11 +420,12 @@ function RobWithC4(atmEntity, atmCoords)
             -- Créer un sac d'argent au sol au lieu de donner directement
             local rewardAmount = math.random(method.rewardMin, method.rewardMax)
 
-            -- Calculer une position aléatoire près de l'ATM
+            -- Calculer la position DEVANT l'ATM (pas dedans!)
+            local atmForward = GetEntityForwardVector(atmEntity)
             local bagCoords = vector3(
-                atmCoords.x + math.random(-1, 1) * 0.5,
-                atmCoords.y + math.random(-1, 1) * 0.5,
-                atmCoords.z
+                atmCoords.x + atmForward.x * 1.0, -- 1 mètre devant
+                atmCoords.y + atmForward.y * 1.0,
+                atmCoords.z - 0.5 -- Un peu plus bas pour être au sol
             )
 
             CreateMoneyBag(bagCoords, rewardAmount)
