@@ -155,6 +155,26 @@ CreateThread(function()
         print(string.format('[ZATM ATM ROBBERY] Item %s retiré du joueur %s', itemName, _source))
     end)
 
+    -- Event: Ramasser un sac d'argent
+    RegisterNetEvent('esx_atmrobbery:pickupMoneyBag')
+    AddEventHandler('esx_atmrobbery:pickupMoneyBag', function(amount)
+        local _source = source
+        local xPlayer = ESX.GetPlayerFromId(_source)
+
+        if not xPlayer then return end
+        if not amount or amount <= 0 then return end
+
+        -- Donner l'argent (black_money ou money selon config)
+        if Config.RewardType == 'black_money' then
+            xPlayer.addAccountMoney('black_money', amount)
+        else
+            xPlayer.addMoney(amount)
+        end
+
+        -- Log
+        print(string.format('[ZATM ATM ROBBERY] %s a ramassé un sac de $%s', xPlayer.getName(), amount))
+    end)
+
     -- Event: Alerter la police
     RegisterNetEvent('esx_atmrobbery:alertPolice')
     AddEventHandler('esx_atmrobbery:alertPolice', function(coords)

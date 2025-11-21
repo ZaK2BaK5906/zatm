@@ -3,6 +3,7 @@ local PlayerData = {}
 local isRobbing = false
 local robbedATMs = {}
 local currentProp = nil
+local moneyBags = {} -- Sacs d'argent au sol
 
 -- Initialisation ESX
 CreateThread(function()
@@ -106,6 +107,113 @@ function RemoveProp()
     end
 end
 
+-- Fonction pour afficher du texte 3D
+function Draw3DText(x, y, z, text)
+    local onScreen, _x, _y = World3dToScreen2d(x, y, z)
+    local px, py, pz = table.unpack(GetGameplayCamCoords())
+    local dist = GetDistanceBetweenCoords(px, py, pz, x, y, z, 1)
+
+    local scale = (1 / dist) * 2
+    local fov = (1 / GetGameplayCamFov()) * 100
+    local scale = scale * fov
+
+    if onScreen then
+        SetTextScale(0.0 * scale, 0.35 * scale)
+        SetTextFont(4)
+        SetTextProportional(1)
+        SetTextColour(255, 255, 255, 215)
+        SetTextDropshadow(0, 0, 0, 0, 255)
+        SetTextEdge(2, 0, 0, 0, 150)
+        SetTextDropShadow()
+        SetTextOutline()
+        SetTextEntry("STRING")
+        SetTextCentre(1)
+        AddTextComponentString(text)
+        DrawText(_x, _y)
+    end
+end
+
+-- Fonction pour créer un sac d'argent au sol
+function CreateMoneyBag(coords, amount)
+    local bagModel = 'prop_money_bag_01'
+    LoadModel(bagModel)
+
+    local bag = CreateObject(GetHashKey(bagModel), coords.x, coords.y, coords.z - 0.5, true, true, false)
+    PlaceObjectOnGroundProperly(bag)
+    FreezeEntityPosition(bag, true)
+
+    local bagId = #moneyBags + 1
+    moneyBags[bagId] = {
+        object = bag,
+        coords = vector3(coords.x, coords.y, coords.z),
+        amount = amount
+    }
+
+    -- Ajouter ox_target sur le sac
+    exports.ox_target:addLocalEntity(bag, {
+        {
+            name = 'pickup_money_bag_' .. bagId,
+            icon = 'fas fa-hand-holding-usd',
+            label = 'Ramasser le sac d\'argent',
+            distance = 2.0,
+            onSelect = function()
+                PickupMoneyBag(bagId)
+            end
+        }
+    })
+
+    -- Thread pour afficher le texte 3D
+    CreateThread(function()
+        while DoesEntityExist(bag) do
+            local playerCoords = GetEntityCoords(PlayerPedId())
+            local bagCoords = GetEntityCoords(bag)
+            local distance = #(playerCoords - bagCoords)
+
+            if distance < 10.0 then
+                Draw3DText(bagCoords.x, bagCoords.y, bagCoords.z + 0.5, '~g~$' .. amount)
+            end
+
+            Wait(0)
+        end
+    end)
+
+    return bagId
+end
+
+-- Fonction pour ramasser un sac d'argent
+function PickupMoneyBag(bagId)
+    local bag = moneyBags[bagId]
+    if not bag then return end
+
+    local ped = PlayerPedId()
+    local bagCoords = GetEntityCoords(bag.object)
+    local playerCoords = GetEntityCoords(ped)
+
+    if #(playerCoords - bagCoords) > 3.0 then
+        ShowNotification('Vous êtes trop loin du sac', 'error')
+        return
+    end
+
+    -- Animation de ramassage
+    LoadAnimDict('pickup_object')
+    TaskPlayAnim(ped, 'pickup_object', 'pickup_low', 8.0, -8.0, 1500, 0, 0, false, false, false)
+
+    Wait(1500)
+
+    -- Donner l'argent au joueur
+    TriggerServerEvent('esx_atmrobbery:pickupMoneyBag', bag.amount)
+
+    -- Supprimer le sac
+    if DoesEntityExist(bag.object) then
+        exports.ox_target:removeLocalEntity(bag.object, 'pickup_money_bag_' .. bagId)
+        DeleteObject(bag.object)
+    end
+
+    moneyBags[bagId] = nil
+
+    ShowNotification('Vous avez ramassé $' .. bag.amount, 'success')
+end
+
 -- Méthode 1: Hacking Laptop
 function RobWithLaptop(atmEntity, atmCoords)
     local method = Config.Methods['laptop']
@@ -124,6 +232,18 @@ function RobWithLaptop(atmEntity, atmCoords)
 
     -- Jouer animation
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
+
+    -- Messages d'immersion pendant le hacking
+    CreateThread(function()
+        Wait(500)
+        if isRobbing then
+            ShowNotification('Connexion au système...', 'info')
+        end
+        Wait(1000)
+        if isRobbing then
+            ShowNotification('Bypass des protocoles de sécurité...', 'info')
+        end
+    end)
 
     -- Progressbar
     local progressCompleted = lib.progressBar({
@@ -297,8 +417,25 @@ function RobWithC4(atmEntity, atmCoords)
                     method.explosion.cameraShake)
             end
 
-            -- Succès
-            TriggerServerEvent('esx_atmrobbery:rewardPlayer', 'c4', method.rewardMin, method.rewardMax, method.removeItem)
+            -- Créer un sac d'argent au sol au lieu de donner directement
+            local rewardAmount = math.random(method.rewardMin, method.rewardMax)
+
+            -- Calculer une position aléatoire près de l'ATM
+            local bagCoords = vector3(
+                atmCoords.x + math.random(-1, 1) * 0.5,
+                atmCoords.y + math.random(-1, 1) * 0.5,
+                atmCoords.z
+            )
+
+            CreateMoneyBag(bagCoords, rewardAmount)
+
+            ShowNotification('Le sac d\'argent est tombé au sol ! Ramassez-le rapidement !', 'success')
+
+            -- Retirer l'item C4
+            if method.removeItem then
+                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+            end
+
             SetATMCooldown(atmEntity)
         else
             ShowNotification(Config.Messages['robbery_failed'], 'error')
@@ -438,6 +575,18 @@ function RobWithDrill(atmEntity, atmCoords)
 
     -- Jouer animation
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
+
+    -- Messages d'immersion pendant le perçage
+    CreateThread(function()
+        Wait(300)
+        if isRobbing then
+            ShowNotification('Positionnement de la perceuse...', 'info')
+        end
+        Wait(1000)
+        if isRobbing then
+            ShowNotification('Perçage du blindage...', 'info')
+        end
+    end)
 
     -- Progressbar
     local progressCompleted = lib.progressBar({

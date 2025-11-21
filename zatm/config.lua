@@ -58,9 +58,9 @@ Config.Methods = {
         }
     },
 
-    -- Méthode 2: Skimmer ATM (Rapide, Gain moyen)
+    -- Méthode 2: Skimmer ATM (Rapide, Gain moyen) - DÉSACTIVÉ
     ['skimmer'] = {
-        enabled = true,
+        enabled = false,
         label = 'ATM Skimmer',
         item = 'atm_skimmer', -- Ou 'card_skimmer'
         removeItem = true, -- Le skimmer est installé et perdu
@@ -150,9 +150,9 @@ Config.Methods = {
         }
     },
 
-    -- Méthode 4: Chalumeau + Pied de biche (Temps moyen)
+    -- Méthode 4: Chalumeau + Pied de biche (Temps moyen) - DÉSACTIVÉ
     ['blowtorch'] = {
-        enabled = true,
+        enabled = false,
         label = 'Chalumeau & Pied de biche',
         item = 'blowtorch', -- Nécessite aussi 'crowbar'
         secondaryItem = 'crowbar',
