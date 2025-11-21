@@ -8,9 +8,9 @@ Config.GlobalCooldown = false -- Si true, tous les ATMs partagent le même coold
 -- Notification système (ox_lib ou esx)
 Config.NotificationType = 'ox_lib' -- 'ox_lib' ou 'esx'
 
--- Police
-Config.RequirePolice = true -- Si true, nécessite un minimum de police en ligne
-Config.MinPolice = 2 -- Nombre minimum de policiers requis
+-- Police (MODE TEST - DÉSACTIVÉ)
+Config.RequirePolice = false -- Si true, nécessite un minimum de police en ligne
+Config.MinPolice = 0 -- Nombre minimum de policiers requis
 
 -- Récompenses
 Config.RewardType = 'black_money' -- 'black_money' ou 'money'
@@ -23,8 +23,8 @@ Config.Methods = {
         label = 'Hacking Laptop',
         item = 'laptop_hacking', -- Ou 'advanced_laptop'
         removeItem = false, -- Si true, l'item est consommé
-        requirePolice = true,
-        minPolice = 1, -- Moins de police requise (discret)
+        requirePolice = false, -- MODE TEST
+        minPolice = 0, -- MODE TEST
 
         -- Animation
         animation = {
@@ -38,13 +38,13 @@ Config.Methods = {
             offset = {x = 0.01, y = 0.02, z = 0.0, rotX = 10.0, rotY = 160.0, rotZ = 0.0}
         },
 
-        -- Minijeu ox_lib
+        -- Minijeu ox_lib (MODE TEST - FACILE)
         skillcheck = {
-            difficulty = {'hard', 'hard', 'hard'},
-            keys = {'w', 'a', 's', 'd'}
+            difficulty = {'easy', 'easy', 'easy'},
+            keys = {'1', '2', '3'}
         },
 
-        duration = 45000, -- 45 secondes
+        duration = 3000, -- 3 secondes (MODE TEST)
 
         -- Récompenses
         rewardMin = 3000,
@@ -64,8 +64,8 @@ Config.Methods = {
         label = 'ATM Skimmer',
         item = 'atm_skimmer', -- Ou 'card_skimmer'
         removeItem = true, -- Le skimmer est installé et perdu
-        requirePolice = true,
-        minPolice = 1,
+        requirePolice = false, -- MODE TEST
+        minPolice = 0, -- MODE TEST
 
         -- Animation
         animation = {
@@ -79,13 +79,13 @@ Config.Methods = {
             offset = {x = 0.06, y = 0.04, z = 0.0, rotX = 0.0, rotY = 0.0, rotZ = 0.0}
         },
 
-        -- Minijeu ox_lib
+        -- Minijeu ox_lib (MODE TEST - FACILE)
         skillcheck = {
-            difficulty = {'easy', 'easy', 'medium'},
-            keys = {'w', 'a', 's', 'd'}
+            difficulty = {'easy', 'easy', 'easy'},
+            keys = {'1', '2', '3'}
         },
 
-        duration = 20000, -- 20 secondes
+        duration = 3000, -- 3 secondes (MODE TEST)
 
         -- Récompenses
         rewardMin = 1500,
@@ -105,8 +105,8 @@ Config.Methods = {
         label = 'C4 Explosif',
         item = 'c4_explosive',
         removeItem = true,
-        requirePolice = true,
-        minPolice = 3, -- Plus de police requise
+        requirePolice = false, -- MODE TEST
+        minPolice = 0, -- MODE TEST
 
         -- Animation
         animation = {
@@ -120,13 +120,13 @@ Config.Methods = {
             offset = {x = 0.06, y = 0.04, z = 0.0, rotX = 90.0, rotY = 0.0, rotZ = 0.0}
         },
 
-        -- Minijeu ox_lib
+        -- Minijeu ox_lib (MODE TEST - FACILE)
         skillcheck = {
-            difficulty = {'medium', 'medium', 'hard'},
-            keys = {'w', 'a', 's', 'd'}
+            difficulty = {'easy', 'easy', 'easy'},
+            keys = {'1', '2', '3'}
         },
 
-        duration = 30000, -- 30 secondes
+        duration = 3000, -- 3 secondes (MODE TEST)
 
         -- Explosion
         explosion = {
@@ -157,8 +157,8 @@ Config.Methods = {
         item = 'blowtorch', -- Nécessite aussi 'crowbar'
         secondaryItem = 'crowbar',
         removeItem = false,
-        requirePolice = true,
-        minPolice = 2,
+        requirePolice = false, -- MODE TEST
+        minPolice = 0, -- MODE TEST
 
         -- Phase 1: Chalumeau
         phase1 = {
@@ -173,10 +173,10 @@ Config.Methods = {
                 offset = {x = 0.0, y = 0.0, z = 0.0, rotX = 0.0, rotY = 0.0, rotZ = 0.0}
             },
             skillcheck = {
-                difficulty = {'medium', 'medium', 'medium'},
-                keys = {'w', 'a', 's', 'd'}
+                difficulty = {'easy', 'easy', 'easy'},
+                keys = {'1', '2', '3'}
             },
-            duration = 25000 -- 25 secondes
+            duration = 3000 -- 3 secondes (MODE TEST)
         },
 
         -- Phase 2: Pied de biche
@@ -192,10 +192,10 @@ Config.Methods = {
                 offset = {x = 0.0, y = 0.0, z = 0.0, rotX = 0.0, rotY = 0.0, rotZ = 0.0}
             },
             skillcheck = {
-                difficulty = {'easy', 'medium', 'hard'},
-                keys = {'w', 'a', 's', 'd'}
+                difficulty = {'easy', 'easy', 'easy'},
+                keys = {'1', '2', '3'}
             },
-            duration = 15000 -- 15 secondes
+            duration = 3000 -- 3 secondes (MODE TEST)
         },
 
         -- Récompenses
@@ -216,8 +216,8 @@ Config.Methods = {
         label = 'Perceuse Industrielle',
         item = 'drill',
         removeItem = false,
-        requirePolice = true,
-        minPolice = 2,
+        requirePolice = false, -- MODE TEST
+        minPolice = 0, -- MODE TEST
 
         -- Animation
         animation = {
@@ -231,13 +231,13 @@ Config.Methods = {
             offset = {x = 0.14, y = 0.0, z = 0.03, rotX = 90.0, rotY = 0.0, rotZ = 0.0} -- Mèche vers l'avant
         },
 
-        -- Minijeu ox_lib (plusieurs phases)
+        -- Minijeu ox_lib (MODE TEST - FACILE)
         skillcheck = {
-            difficulty = {'medium', 'hard', 'medium', 'hard'},
-            keys = {'w', 'a', 's', 'd'}
+            difficulty = {'easy', 'easy', 'easy'},
+            keys = {'1', '2', '3'}
         },
 
-        duration = 40000, -- 40 secondes
+        duration = 3000, -- 3 secondes (MODE TEST)
 
         -- Sons
         sound = {
