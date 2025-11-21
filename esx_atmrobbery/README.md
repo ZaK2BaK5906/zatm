@@ -18,22 +18,63 @@ Un système complet de braquage d'ATM pour ESX Legacy avec 5 méthodes différen
 - [es_extended](https://github.com/esx-framework/esx_core) (ESX Legacy 1.12.14+)
 - [ox_lib](https://github.com/overextended/ox_lib)
 - [ox_target](https://github.com/overextended/ox_target)
+- [ox_inventory](https://github.com/overextended/ox_inventory)
 
 ## Installation
 
 1. Téléchargez et placez le dossier `esx_atmrobbery` dans votre dossier `resources`
 
-2. Ajoutez les items dans votre base de données ESX:
+2. Ajoutez les items dans **ox_inventory** en ajoutant ceci dans `ox_inventory/data/items.lua`:
 
-```sql
--- Items pour les méthodes de braquage
-INSERT INTO `items` (`name`, `label`, `weight`) VALUES
-    ('laptop_hacking', 'Laptop de Hacking', 1000),
-    ('atm_skimmer', 'Skimmer ATM', 500),
-    ('c4_explosive', 'C4 Explosif', 2000),
-    ('blowtorch', 'Chalumeau', 1500),
-    ('crowbar', 'Pied de biche', 800),
-    ('drill', 'Perceuse Industrielle', 1800);
+```lua
+-- Items pour les méthodes de braquage d'ATM
+['laptop_hacking'] = {
+    label = 'Laptop de Hacking',
+    weight = 1000,
+    stack = false,
+    close = true,
+    description = 'Laptop configuré pour hacker les ATM'
+},
+
+['atm_skimmer'] = {
+    label = 'Skimmer ATM',
+    weight = 500,
+    stack = true,
+    close = true,
+    description = 'Dispositif pour cloner les cartes bancaires'
+},
+
+['c4_explosive'] = {
+    label = 'C4 Explosif',
+    weight = 2000,
+    stack = false,
+    close = true,
+    description = 'Explosif plastique pour faire sauter les ATM'
+},
+
+['blowtorch'] = {
+    label = 'Chalumeau',
+    weight = 1500,
+    stack = false,
+    close = true,
+    description = 'Chalumeau pour découper le métal'
+},
+
+['crowbar'] = {
+    label = 'Pied de biche',
+    weight = 800,
+    stack = false,
+    close = true,
+    description = 'Levier pour forcer les ouvertures'
+},
+
+['drill'] = {
+    label = 'Perceuse Industrielle',
+    weight = 1800,
+    stack = false,
+    close = true,
+    description = 'Perceuse puissante pour percer les ATM'
+},
 ```
 
 3. Ajoutez le script dans votre `server.cfg`:
@@ -43,6 +84,8 @@ ensure esx_atmrobbery
 ```
 
 4. Redémarrez votre serveur
+
+> **Note**: Ce script utilise **ox_inventory** pour la gestion des items. Assurez-vous que ox_inventory est correctement installé et configuré.
 
 ## Les 5 Méthodes de Braquage
 
@@ -211,6 +254,7 @@ Si vous rencontrez des problèmes:
 - Développé pour ESX Legacy 1.12.14
 - Utilise ox_lib pour les skillchecks
 - Utilise ox_target pour l'interaction
+- Utilise ox_inventory pour la gestion des items
 
 ## Licence
 

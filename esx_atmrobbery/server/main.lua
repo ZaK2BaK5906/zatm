@@ -48,9 +48,9 @@ ESX.RegisterServerCallback('esx_atmrobbery:canRob', function(source, cb, method)
         end
     end
 
-    -- Vérifier si le joueur possède l'item principal
-    local hasItem = xPlayer.getInventoryItem(methodConfig.item)
-    if not hasItem or hasItem.count < 1 then
+    -- Vérifier si le joueur possède l'item principal (ox_inventory)
+    local hasItem = exports.ox_inventory:GetItem(source, methodConfig.item, nil, true)
+    if not hasItem or hasItem < 1 then
         TriggerClientEvent('esx:showNotification', source,
             string.format(Config.Messages['missing_item'], methodConfig.item))
         cb(false)
@@ -59,8 +59,8 @@ ESX.RegisterServerCallback('esx_atmrobbery:canRob', function(source, cb, method)
 
     -- Vérifier l'item secondaire (pour blowtorch)
     if methodConfig.secondaryItem then
-        local hasSecondaryItem = xPlayer.getInventoryItem(methodConfig.secondaryItem)
-        if not hasSecondaryItem or hasSecondaryItem.count < 1 then
+        local hasSecondaryItem = exports.ox_inventory:GetItem(source, methodConfig.secondaryItem, nil, true)
+        if not hasSecondaryItem or hasSecondaryItem < 1 then
             TriggerClientEvent('esx:showNotification', source,
                 string.format(Config.Messages['missing_item'], methodConfig.secondaryItem))
             cb(false)
@@ -71,29 +71,23 @@ ESX.RegisterServerCallback('esx_atmrobbery:canRob', function(source, cb, method)
     cb(true)
 end)
 
--- Callback: Récupérer les items du joueur
+-- Callback: Récupérer les items du joueur (ox_inventory)
 ESX.RegisterServerCallback('esx_atmrobbery:getPlayerItems', function(source, cb)
-    local xPlayer = ESX.GetPlayerFromId(source)
-
-    if not xPlayer then
-        cb({})
-        return
-    end
-
     local items = {}
 
     -- Vérifier chaque méthode
     for methodName, methodConfig in pairs(Config.Methods) do
         if methodConfig.enabled then
-            local item = xPlayer.getInventoryItem(methodConfig.item)
-            if item and item.count > 0 then
+            -- Vérifier item principal avec ox_inventory
+            local itemCount = exports.ox_inventory:GetItem(source, methodConfig.item, nil, true)
+            if itemCount and itemCount > 0 then
                 items[methodConfig.item] = true
             end
 
             -- Vérifier item secondaire
             if methodConfig.secondaryItem then
-                local secondaryItem = xPlayer.getInventoryItem(methodConfig.secondaryItem)
-                if secondaryItem and secondaryItem.count > 0 then
+                local secondaryItemCount = exports.ox_inventory:GetItem(source, methodConfig.secondaryItem, nil, true)
+                if secondaryItemCount and secondaryItemCount > 0 then
                     items[methodConfig.secondaryItem] = true
                 end
             end
@@ -124,9 +118,9 @@ AddEventHandler('esx_atmrobbery:rewardPlayer', function(method, rewardMin, rewar
         xPlayer.addMoney(reward)
     end
 
-    -- Retirer l'item si nécessaire
+    -- Retirer l'item si nécessaire (ox_inventory)
     if removeItem then
-        xPlayer.removeInventoryItem(methodConfig.item, 1)
+        exports.ox_inventory:RemoveItem(_source, methodConfig.item, 1)
     end
 
     -- Notification
@@ -138,15 +132,14 @@ AddEventHandler('esx_atmrobbery:rewardPlayer', function(method, rewardMin, rewar
         xPlayer.getName(), xPlayer.identifier, method, reward))
 end)
 
--- Event: Retirer un item (en cas d'échec)
+-- Event: Retirer un item (en cas d'échec) - ox_inventory
 RegisterNetEvent('esx_atmrobbery:removeItem')
 AddEventHandler('esx_atmrobbery:removeItem', function(itemName, shouldRemove)
     local _source = source
-    local xPlayer = ESX.GetPlayerFromId(_source)
 
-    if not xPlayer or not shouldRemove then return end
+    if not shouldRemove then return end
 
-    xPlayer.removeInventoryItem(itemName, 1)
+    exports.ox_inventory:RemoveItem(_source, itemName, 1)
 end)
 
 -- Event: Alerter la police
@@ -194,7 +187,8 @@ ESX.RegisterCommand('giverobberyitem', 'admin', function(xPlayer, args, showErro
         return
     end
 
-    xTarget.addInventoryItem(itemName, amount)
+    -- Utiliser ox_inventory pour ajouter l'item
+    exports.ox_inventory:AddItem(targetId, itemName, amount)
     TriggerClientEvent('esx:showNotification', xPlayer.source,
         string.format('Vous avez donné %sx %s à %s', amount, itemName, xTarget.getName()))
     TriggerClientEvent('esx:showNotification', xTarget.source,
