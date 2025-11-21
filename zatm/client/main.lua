@@ -241,14 +241,11 @@ function RobWithLaptop(atmEntity, atmCoords)
 
     Wait(500)
 
-    -- Lancer le minigeu DataCrack
-    exports["datacrack"]:Start(method.datacrackDifficulty)
-
-    -- Attendre le résultat
+    -- Lancer le minigeu DataCrack avec callback
     local hackResult = nil
 
-    AddEventHandler("datacrack", function(success)
-        hackResult = success
+    TriggerEvent("datacrack:start", method.datacrackDifficulty, function(output)
+        hackResult = output
     end)
 
     -- Attendre que le hack soit terminé

@@ -34,7 +34,7 @@ Config.Methods = {
         },
 
         -- Minigeu datacrack (MODE TEST - FACILE)
-        datacrackDifficulty = 1, -- 1 = facile, 2 = moyen, 3 = difficile
+        datacrackDifficulty = 2, -- 2 = facile, 5 = difficile (range valide: 2-5)
 
         duration = 3000, -- 3 secondes (MODE TEST)
 
