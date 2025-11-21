@@ -26,23 +26,15 @@ Config.Methods = {
         requirePolice = false, -- MODE TEST
         minPolice = 0, -- MODE TEST
 
-        -- Animation
+        -- Animation (sans props)
         animation = {
-            dict = 'anim@heists@prison_heistunfinished_biztarget_idle',
+            dict = 'anim@heists@ornate_bank@hack',
             anim = 'hack_loop',
             flag = 16 -- Flag 16 permet l'animation répétée et le mouvement des mains
         },
-        prop = {
-            model = 'prop_laptop_01a',
-            bone = 60309, -- IK_R_Hand
-            offset = {x = 0.01, y = 0.02, z = 0.0, rotX = 10.0, rotY = 160.0, rotZ = 0.0}
-        },
 
-        -- Minijeu ox_lib (MODE TEST - FACILE)
-        skillcheck = {
-            difficulty = {'easy', 'easy', 'easy'},
-            keys = {'1', '2', '3'}
-        },
+        -- Minigeu datacrack (MODE TEST - FACILE)
+        datacrackDifficulty = 1, -- 1 = facile, 2 = moyen, 3 = difficile
 
         duration = 3000, -- 3 secondes (MODE TEST)
 

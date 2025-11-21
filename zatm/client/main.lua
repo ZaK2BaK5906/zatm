@@ -214,7 +214,7 @@ function PickupMoneyBag(bagId)
     ShowNotification('Vous avez ramassé $' .. bag.amount, 'success')
 end
 
--- Méthode 1: Hacking Laptop
+-- Méthode 1: Hacking Laptop (avec DataCrack)
 function RobWithLaptop(atmEntity, atmCoords)
     local method = Config.Methods['laptop']
 
@@ -226,68 +226,56 @@ function RobWithLaptop(atmEntity, atmCoords)
 
     local ped = PlayerPedId()
 
-    -- Charger animation et prop
+    -- Charger animation (SANS props)
     LoadAnimDict(method.animation.dict)
-    local prop = CreateProp(method.prop.model, method.prop.bone, method.prop.offset)
 
     -- Jouer animation
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
 
     -- Messages d'immersion pendant le hacking
-    CreateThread(function()
-        Wait(500)
-        if isRobbing then
-            ShowNotification('Connexion au système...', 'info')
-        end
-        Wait(1000)
-        if isRobbing then
-            ShowNotification('Bypass des protocoles de sécurité...', 'info')
-        end
+    ShowNotification('Connexion au système...', 'info')
+
+    Wait(1500)
+
+    ShowNotification('Lancement du hack...', 'info')
+
+    Wait(500)
+
+    -- Lancer le minigeu DataCrack
+    exports["datacrack"]:Start(method.datacrackDifficulty)
+
+    -- Attendre le résultat
+    local hackResult = nil
+
+    AddEventHandler("datacrack", function(success)
+        hackResult = success
     end)
 
-    -- Progressbar
-    local progressCompleted = lib.progressBar({
-        duration = method.duration,
-        label = 'Hacking de l\'ATM...',
-        useWhileDead = false,
-        canCancel = true,
-        disable = {
-            car = true,
-            move = true,
-            combat = true
-        }
-    })
+    -- Attendre que le hack soit terminé
+    while hackResult == nil do
+        Wait(100)
+    end
 
-    if progressCompleted then
-        -- Skillcheck
-        local success = lib.skillCheck(method.skillcheck.difficulty, method.skillcheck.keys)
+    -- Nettoyer animation
+    ClearPedTasks(ped)
 
-        -- Nettoyer animation et prop
-        ClearPedTasks(ped)
-        RemoveProp()
+    if hackResult then
+        -- Succès
+        ShowNotification('Accès obtenu !', 'success')
+        TriggerServerEvent('esx_atmrobbery:rewardPlayer', 'laptop', method.rewardMin, method.rewardMax, method.removeItem)
+        SetATMCooldown(atmEntity)
 
-        if success then
-            -- Succès - Retirer l'item et donner récompense
-            TriggerServerEvent('esx_atmrobbery:rewardPlayer', 'laptop', method.rewardMin, method.rewardMax, method.removeItem)
-            SetATMCooldown(atmEntity)
-
-            -- Alerte police
-            if method.policeAlert.enabled and math.random(100) <= method.policeAlert.chance then
-                Wait(method.policeAlert.delay)
-                TriggerServerEvent('esx_atmrobbery:alertPolice', atmCoords)
-            end
-        else
-            ShowNotification(Config.Messages['robbery_failed'], 'error')
-            -- En cas d'échec, retirer quand même l'item si removeItem est true
-            if method.removeItem then
-                TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
-            end
+        -- Alerte police
+        if method.policeAlert.enabled and math.random(100) <= method.policeAlert.chance then
+            Wait(method.policeAlert.delay)
+            TriggerServerEvent('esx_atmrobbery:alertPolice', atmCoords)
         end
     else
-        -- Annulé
-        ClearPedTasks(ped)
-        RemoveProp()
-        ShowNotification(Config.Messages['robbery_cancelled'], 'error')
+        -- Échec
+        ShowNotification(Config.Messages['robbery_failed'], 'error')
+        if method.removeItem then
+            TriggerServerEvent('esx_atmrobbery:removeItemOnly', method.item)
+        end
     end
 
     isRobbing = false
