@@ -1,6 +1,6 @@
-# ESX ATM Robbery - Système de Braquage d'ATM avec 5 Méthodes
+# ZATM - Système de Braquage d'ATM avec 5 Méthodes
 
-Un système complet de braquage d'ATM pour ESX Legacy avec 5 méthodes différentes, chacune avec ses propres animations, minijeux et caractéristiques.
+Un système complet de braquage d'ATM pour ESX Legacy **Full OX** (ox_lib, ox_target, ox_inventory) avec 5 méthodes différentes, chacune avec ses propres animations, minijeux et caractéristiques.
 
 ## Caractéristiques
 
@@ -22,7 +22,7 @@ Un système complet de braquage d'ATM pour ESX Legacy avec 5 méthodes différen
 
 ## Installation
 
-1. Téléchargez et placez le dossier `esx_atmrobbery` dans votre dossier `resources`
+1. Téléchargez et placez le dossier `zatm` dans votre dossier `resources`
 
 2. Ajoutez les items dans **ox_inventory** en ajoutant ceci dans `ox_inventory/data/items.lua`:
 
@@ -80,12 +80,17 @@ Un système complet de braquage d'ATM pour ESX Legacy avec 5 méthodes différen
 3. Ajoutez le script dans votre `server.cfg`:
 
 ```cfg
-ensure esx_atmrobbery
+ensure zatm
 ```
 
 4. Redémarrez votre serveur
 
-> **Note**: Ce script utilise **ox_inventory** pour la gestion des items. Assurez-vous que ox_inventory est correctement installé et configuré.
+> **Note importante**: Ce script est **FULL OX** sous ESX. Il utilise:
+> - **ox_inventory** pour la gestion des items (pas de base de données SQL)
+> - **ox_lib** pour les skillchecks et progressbar
+> - **ox_target** pour l'interaction avec les ATMs
+>
+> Assurez-vous que tous ces scripts sont correctement installés et configurés avant d'utiliser ZATM.
 
 ## Les 5 Méthodes de Braquage
 
@@ -245,16 +250,17 @@ local webhookURL = 'VOTRE_WEBHOOK_DISCORD'
 ## Support et Bugs
 
 Si vous rencontrez des problèmes:
-1. Vérifiez que toutes les dépendances sont à jour
+1. Vérifiez que toutes les dépendances OX sont à jour
 2. Vérifiez les logs serveur (`F8` console)
-3. Assurez-vous que les items sont bien ajoutés dans la base de données
+3. Assurez-vous que les items sont bien ajoutés dans `ox_inventory/data/items.lua`
+4. Vérifiez que le script se charge avec le message `[ZATM ATM ROBBERY] Script chargé avec succès ! Full OX sous ESX`
 
 ## Crédits
 
-- Développé pour ESX Legacy 1.12.14
-- Utilise ox_lib pour les skillchecks
-- Utilise ox_target pour l'interaction
-- Utilise ox_inventory pour la gestion des items
+- Développé pour ESX Legacy 1.12.14 **Full OX**
+- Utilise ox_lib pour les skillchecks et progressbar
+- Utilise ox_target pour l'interaction avec les ATMs
+- Utilise ox_inventory pour la gestion complète des items (pas de SQL)
 
 ## Licence
 
@@ -262,6 +268,7 @@ Ce script est fourni tel quel, libre d'utilisation et de modification.
 
 ---
 
-**Version**: 1.0.0
+**Nom**: ZATM - ATM Robbery System
+**Version**: 1.1.0
 **Auteur**: Claude AI
-**Compatibilité**: ESX Legacy 1.12.14+
+**Compatibilité**: ESX Legacy 1.12.14+ avec ox_lib, ox_target et ox_inventory

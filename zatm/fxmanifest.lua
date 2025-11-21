@@ -2,8 +2,8 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'Claude AI'
-description 'ESX ATM Robbery - 5 Methods System'
-version '1.0.0'
+description 'ZATM - ATM Robbery System (Full OX sous ESX) - 5 Methods'
+version '1.1.0'
 
 lua54 'yes'
 
