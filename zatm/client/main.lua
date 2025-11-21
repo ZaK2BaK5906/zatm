@@ -226,11 +226,27 @@ function RobWithLaptop(atmEntity, atmCoords)
 
     local ped = PlayerPedId()
 
-    -- Charger animation (SANS props)
+    -- Charger animation
     LoadAnimDict(method.animation.dict)
+
+    -- Charger et attacher le prop tablet
+    local propModel = GetHashKey(method.prop.model)
+    RequestModel(propModel)
+    while not HasModelLoaded(propModel) do
+        Wait(10)
+    end
 
     -- Jouer animation
     TaskPlayAnim(ped, method.animation.dict, method.animation.anim, 8.0, -8.0, -1, method.animation.flag, 0, false, false, false)
+
+    Wait(100) -- Petit délai pour que l'animation démarre
+
+    -- Attacher le prop
+    local prop = CreateObject(propModel, 0.0, 0.0, 0.0, true, true, true)
+    AttachEntityToEntity(prop, ped, GetPedBoneIndex(ped, method.prop.bone),
+        method.prop.offset.x, method.prop.offset.y, method.prop.offset.z,
+        method.prop.offset.rotX, method.prop.offset.rotY, method.prop.offset.rotZ,
+        true, true, false, true, 1, true)
 
     -- Messages d'immersion pendant le hacking
     ShowNotification('Connexion au système...', 'info')
@@ -253,7 +269,9 @@ function RobWithLaptop(atmEntity, atmCoords)
         Wait(100)
     end
 
-    -- Nettoyer animation
+    -- Nettoyer prop et animation
+    DeleteObject(prop)
+    SetModelAsNoLongerNeeded(propModel)
     ClearPedTasks(ped)
 
     if hackResult then
@@ -408,9 +426,9 @@ function RobWithC4(atmEntity, atmCoords)
             -- Calculer la position DEVANT l'ATM (pas dedans!)
             local atmForward = GetEntityForwardVector(atmEntity)
             local bagCoords = vector3(
-                atmCoords.x + atmForward.x * 1.0, -- 1 mètre devant
-                atmCoords.y + atmForward.y * 1.0,
-                atmCoords.z - 0.5 -- Un peu plus bas pour être au sol
+                atmCoords.x - atmForward.x * 1.0, -- 1 mètre devant
+                atmCoords.y - atmForward.y * 1.0,
+                atmCoords.z + 0.5 -- Un peu plus bas pour être au sol
             )
 
             CreateMoneyBag(bagCoords, rewardAmount)

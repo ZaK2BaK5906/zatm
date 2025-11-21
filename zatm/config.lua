@@ -17,20 +17,25 @@ Config.RewardType = 'black_money' -- 'black_money' ou 'money'
 
 -- Méthodes de braquage
 Config.Methods = {
-    -- Méthode 1: Hacking Laptop (Discret, Technique)
+    -- Méthode 1: Hacking Tablet (Discret, Technique)
     ['laptop'] = {
         enabled = true,
-        label = 'Hacking Laptop',
-        item = 'laptop_hacking', -- Ou 'advanced_laptop'
+        label = 'Hacking Tablet',
+        item = 'tablet', -- Tablette pour le hacking
         removeItem = false, -- Si true, l'item est consommé
         requirePolice = false, -- MODE TEST
         minPolice = 0, -- MODE TEST
 
-        -- Animation (sans props)
+        -- Animation avec tablette
         animation = {
             dict = 'anim@heists@ornate_bank@hack',
             anim = 'hack_loop',
             flag = 16 -- Flag 16 permet l'animation répétée et le mouvement des mains
+        },
+        prop = {
+            model = 'prop_cs_tablet',
+            bone = 28422, -- Main droite
+            offset = {x = 0.0, y = 0.0, z = 0.03, rotX = 0.0, rotY = 0.0, rotZ = 0.0}
         },
 
         -- Minigeu datacrack (MODE TEST - FACILE)
@@ -220,7 +225,7 @@ Config.Methods = {
         prop = {
             model = 'hei_prop_heist_drill',
             bone = 28422,
-            offset = {x = 0.14, y = 0.0, z = 0.03, rotX = 90.0, rotY = 0.0, rotZ = 0.0} -- Mèche vers l'avant
+            offset = {x = 0.14, y = 0.0, z = 0.03, rotX = 0.0, rotY = 0.0, rotZ = 0.0} -- Mèche vers l'avant
         },
 
         -- Minijeu ox_lib (MODE TEST - FACILE)
