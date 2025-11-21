@@ -26,17 +26,8 @@ Config.Methods = {
         requirePolice = false, -- MODE TEST
         minPolice = 0, -- MODE TEST
 
-        -- Animation avec tablette
-        animation = {
-            dict = 'anim@heists@ornate_bank@hack',
-            anim = 'hack_loop',
-            flag = 16 -- Flag 16 permet l'animation répétée et le mouvement des mains
-        },
-        prop = {
-            model = 'prop_cs_tablet',
-            bone = 28422, -- Main droite
-            offset = {x = 0.0, y = 0.0, z = 0.03, rotX = 0.0, rotY = 0.0, rotZ = 0.0}
-        },
+        -- Emote scully_emotemenu (tablet2 avec prop intégré)
+        emote = 'tablet2', -- Commande emote scully
 
         -- Minigeu datacrack (MODE TEST - FACILE)
         datacrackDifficulty = 2, -- 2 = facile, 5 = difficile (range valide: 2-5)
