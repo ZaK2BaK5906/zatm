@@ -620,7 +620,7 @@ function RobWithDrill(atmEntity, atmCoords)
     isRobbing = false
 end
 
--- Menu principal pour choisir la méthode
+-- Menu principal pour choisir la méthode (avec NUI)
 function OpenRobberyMenu(atmEntity, atmCoords)
     if isRobbing then
         ShowNotification(Config.Messages['already_robbing'], 'error')
@@ -634,117 +634,81 @@ function OpenRobberyMenu(atmEntity, atmCoords)
 
     -- Vérifier les items du joueur via le serveur
     ESX.TriggerServerCallback('esx_atmrobbery:getPlayerItems', function(items)
-        local menuOptions = {}
+        local hasLaptop = Config.Methods['laptop'].enabled and items[Config.Methods['laptop'].item] or false
+        local hasC4 = Config.Methods['c4'].enabled and items[Config.Methods['c4'].item] or false
+        local hasDrill = Config.Methods['drill'].enabled and items[Config.Methods['drill'].item] or false
 
-        -- Méthode 1: Laptop
-        if Config.Methods['laptop'].enabled and items[Config.Methods['laptop'].item] then
-            table.insert(menuOptions, {
-                title = Config.Methods['laptop'].label,
-                description = 'Hacking technique et discret',
-                icon = 'laptop',
-                onSelect = function()
-                    ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
-                        if canRob then
-                            isRobbing = true
-                            RobWithLaptop(atmEntity, atmCoords)
-                        else
-                            isRobbing = false
-                        end
-                    end, 'laptop')
-                end
-            })
-        end
-
-        -- Méthode 2: Skimmer
-        if Config.Methods['skimmer'].enabled and items[Config.Methods['skimmer'].item] then
-            table.insert(menuOptions, {
-                title = Config.Methods['skimmer'].label,
-                description = 'Installation rapide, gain moyen',
-                icon = 'credit-card',
-                onSelect = function()
-                    ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
-                        if canRob then
-                            isRobbing = true
-                            RobWithSkimmer(atmEntity, atmCoords)
-                        else
-                            isRobbing = false
-                        end
-                    end, 'skimmer')
-                end
-            })
-        end
-
-        -- Méthode 3: C4
-        if Config.Methods['c4'].enabled and items[Config.Methods['c4'].item] then
-            table.insert(menuOptions, {
-                title = Config.Methods['c4'].label,
-                description = 'BRUYANT ! Gros gain, alerte immédiate',
-                icon = 'bomb',
-                onSelect = function()
-                    ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
-                        if canRob then
-                            isRobbing = true
-                            RobWithC4(atmEntity, atmCoords)
-                        else
-                            isRobbing = false
-                        end
-                    end, 'c4')
-                end
-            })
-        end
-
-        -- Méthode 4: Blowtorch
-        if Config.Methods['blowtorch'].enabled and items[Config.Methods['blowtorch'].item] and items[Config.Methods['blowtorch'].secondaryItem] then
-            table.insert(menuOptions, {
-                title = Config.Methods['blowtorch'].label,
-                description = 'Découpe et ouverture en 2 phases',
-                icon = 'fire',
-                onSelect = function()
-                    ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
-                        if canRob then
-                            isRobbing = true
-                            RobWithBlowtorch(atmEntity, atmCoords)
-                        else
-                            isRobbing = false
-                        end
-                    end, 'blowtorch')
-                end
-            })
-        end
-
-        -- Méthode 5: Drill
-        if Config.Methods['drill'].enabled and items[Config.Methods['drill'].item] then
-            table.insert(menuOptions, {
-                title = Config.Methods['drill'].label,
-                description = 'Perçage progressif, méthode mystère',
-                icon = 'screwdriver',
-                onSelect = function()
-                    ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
-                        if canRob then
-                            isRobbing = true
-                            RobWithDrill(atmEntity, atmCoords)
-                        else
-                            isRobbing = false
-                        end
-                    end, 'drill')
-                end
-            })
-        end
-
-        if #menuOptions == 0 then
+        if not hasLaptop and not hasC4 and not hasDrill then
             ShowNotification('Vous n\'avez aucun équipement pour braquer cet ATM', 'error')
             return
         end
 
-        lib.registerContext({
-            id = 'atm_robbery_menu',
-            title = 'Braquage d\'ATM',
-            options = menuOptions
+        -- Ouvrir l'interface NUI
+        SetNuiFocus(true, true)
+        SendNUIMessage({
+            type = 'openUI',
+            hasLaptop = hasLaptop,
+            hasC4 = hasC4,
+            hasDrill = hasDrill
         })
-
-        lib.showContext('atm_robbery_menu')
     end)
 end
+
+-- NUI Callbacks
+RegisterNUICallback('closeUI', function(data, cb)
+    SetNuiFocus(false, false)
+    cb('ok')
+end)
+
+RegisterNUICallback('startRobbery', function(data, cb)
+    SetNuiFocus(false, false)
+
+    local method = data.method
+
+    -- Trouver l'ATM le plus proche
+    local playerCoords = GetEntityCoords(PlayerPedId())
+    local closestATM = nil
+    local closestDist = 999999.0
+
+    for _, model in ipairs(Config.ATMs.models) do
+        local atmEntity = GetClosestObjectOfType(playerCoords.x, playerCoords.y, playerCoords.z, 3.0, model, false, false, false)
+        if atmEntity ~= 0 then
+            local atmCoords = GetEntityCoords(atmEntity)
+            local dist = #(playerCoords - atmCoords)
+            if dist < closestDist then
+                closestDist = dist
+                closestATM = atmEntity
+            end
+        end
+    end
+
+    if not closestATM then
+        ShowNotification('Aucun ATM à proximité', 'error')
+        cb('ok')
+        return
+    end
+
+    local atmCoords = GetEntityCoords(closestATM)
+
+    -- Vérifier si le joueur peut braquer
+    ESX.TriggerServerCallback('esx_atmrobbery:canRob', function(canRob)
+        if canRob then
+            isRobbing = true
+
+            if method == 'laptop' then
+                RobWithLaptop(closestATM, atmCoords)
+            elseif method == 'c4' then
+                RobWithC4(closestATM, atmCoords)
+            elseif method == 'drill' then
+                RobWithDrill(closestATM, atmCoords)
+            end
+        else
+            isRobbing = false
+        end
+    end, method)
+
+    cb('ok')
+end)
 
 -- Initialisation ox_target pour les ATMs
 CreateThread(function()

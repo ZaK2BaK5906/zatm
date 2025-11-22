@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Claude AI'
 description 'ZATM - ATM Robbery System (Full OX sous ESX) - 5 Methods'
-version '1.1.0'
+version '1.2.0'
 
 lua54 'yes'
 
@@ -19,6 +19,14 @@ client_scripts {
 
 server_scripts {
     'server/main.lua'
+}
+
+ui_page 'nui/index.html'
+
+files {
+    'nui/index.html',
+    'nui/style.css',
+    'nui/script.js'
 }
 
 dependencies {

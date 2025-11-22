@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZATM - Interface</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container" id="app" style="display: none;">
+        <div class="tablet">
+            <div class="tablet-header">
+                <div class="header-left">
+                    <i class="fas fa-user-ninja"></i>
+                    <span class="header-title">BRAQUAGE D'ATM</span>
+                </div>
+                <div class="header-right">
+                    <button class="close-btn" id="closeBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tablet-body">
+                <div class="location-info">
+                    <h2 id="locationName">DISTRIBUTEUR BANCAIRE</h2>
+                    <p class="location-subtitle">Sélectionnez votre méthode de braquage</p>
+                </div>
+
+                <div class="robbery-options">
+                    <!-- Option Tablette (Hacking) -->
+                    <div class="option-card" id="laptopOption">
+                        <div class="option-icon laptop">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <div class="option-content">
+                            <h3>Hacking Tablette</h3>
+                            <p class="option-description">
+                                Piratez le système de l'ATM avec votre tablette. Méthode discrète et technique.
+                            </p>
+                            <div class="option-features">
+                                <div class="feature">
+                                    <i class="fas fa-ghost"></i>
+                                    <span>Discret</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-coins"></i>
+                                    <span>$3,000 - $5,000</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>30% alerte police</span>
+                                </div>
+                            </div>
+                            <div class="option-status" id="laptopStatus">
+                                <i class="fas fa-lock"></i>
+                                <span>Tablette requise</span>
+                            </div>
+                            <button class="select-btn" id="laptopBtn" disabled>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Sélectionner</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Option C4 -->
+                    <div class="option-card" id="c4Option">
+                        <div class="option-icon c4">
+                            <i class="fas fa-bomb"></i>
+                        </div>
+                        <div class="option-content">
+                            <h3>C4 Explosif</h3>
+                            <p class="option-description">
+                                Faites exploser l'ATM ! Méthode bruyante mais très lucrative. Alerte immédiate !
+                            </p>
+                            <div class="option-features">
+                                <div class="feature">
+                                    <i class="fas fa-volume-up"></i>
+                                    <span>TRÈS BRUYANT</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-coins"></i>
+                                    <span>$6,000 - $10,000</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>100% alerte police</span>
+                                </div>
+                            </div>
+                            <div class="option-status" id="c4Status">
+                                <i class="fas fa-lock"></i>
+                                <span>C4 requis</span>
+                            </div>
+                            <button class="select-btn" id="c4Btn" disabled>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Sélectionner</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Option Perceuse -->
+                    <div class="option-card" id="drillOption">
+                        <div class="option-icon drill">
+                            <i class="fas fa-screwdriver"></i>
+                        </div>
+                        <div class="option-content">
+                            <h3>Perceuse Industrielle</h3>
+                            <p class="option-description">
+                                Percez le blindage de l'ATM. Méthode efficace avec gain intéressant.
+                            </p>
+                            <div class="option-features">
+                                <div class="feature">
+                                    <i class="fas fa-tools"></i>
+                                    <span>Technique</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-coins"></i>
+                                    <span>$5,000 - $8,000</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>70% alerte police</span>
+                                </div>
+                            </div>
+                            <div class="option-status" id="drillStatus">
+                                <i class="fas fa-lock"></i>
+                                <span>Perceuse requise</span>
+                            </div>
+                            <button class="select-btn" id="drillBtn" disabled>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Sélectionner</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tablet-footer">
+                    <div class="warning-box">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>La police sera probablement alertée. Soyez rapide et prudent !</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
