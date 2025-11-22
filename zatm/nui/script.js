@@ -17,9 +17,9 @@ $(document).ready(function() {
 
     // Fonction pour ouvrir l'interface
     function openUI(data) {
-        hasLaptop = data.hasLaptop || false;
-        hasC4 = data.hasC4 || false;
-        hasDrill = data.hasDrill || false;
+        hasLaptop = data.hasLaptop;
+        hasC4 = data.hasC4;
+        hasDrill = data.hasDrill;
 
         // Mettre à jour les statuts et boutons
         updateOptionStatus('laptop', hasLaptop);
@@ -31,9 +31,9 @@ $(document).ready(function() {
     }
 
     // Fonction pour mettre à jour le statut d'une option
-    function updateOptionStatus(type, hasItem) {
-        const statusElement = $(`#${type}Status`);
-        const btnElement = $(`#${type}Btn`);
+    function updateOptionStatus(method, hasItem) {
+        const statusElement = $(`#${method}Status`);
+        const btnElement = $(`#${method}Btn`);
 
         if (hasItem) {
             statusElement.removeClass('locked').addClass('available');
@@ -46,7 +46,7 @@ $(document).ready(function() {
             statusElement.removeClass('available').addClass('locked');
             let itemName = '';
 
-            switch(type) {
+            switch(method) {
                 case 'laptop':
                     itemName = 'Tablette requise';
                     break;
