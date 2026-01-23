@@ -7,13 +7,13 @@ CreateThread(function()
         Wait(0)
     end
 
-    -- Fonction pour compter les policiers en ligne
+    -- Fonction pour compter les policiers et sheriff en ligne
     function GetPoliceCount()
         local count = 0
         local xPlayers = ESX.GetExtendedPlayers()
 
         for _, xPlayer in pairs(xPlayers) do
-            if xPlayer.job.name == 'police' then
+            if xPlayer.job.name == 'police' or xPlayer.job.name == 'sheriff' then
                 count = count + 1
             end
         end
@@ -175,21 +175,21 @@ CreateThread(function()
         print(string.format('[ZATM ATM ROBBERY] %s a ramassé un sac de $%s', xPlayer.getName(), amount))
     end)
 
-    -- Event: Alerter la police
+    -- Event: Alerter la police et sheriff
     RegisterNetEvent('esx_atmrobbery:alertPolice')
     AddEventHandler('esx_atmrobbery:alertPolice', function(coords)
         local _source = source
         local xPlayers = ESX.GetExtendedPlayers()
 
-        -- Envoyer l'alerte à tous les policiers
+        -- Envoyer l'alerte à tous les policiers et sheriff
         for _, xPlayer in pairs(xPlayers) do
-            if xPlayer.job.name == 'police' then
+            if xPlayer.job.name == 'police' or xPlayer.job.name == 'sheriff' then
                 TriggerClientEvent('esx_atmrobbery:policeAlert', xPlayer.source, coords)
             end
         end
 
         -- Log
-        print(string.format('[ZATM ATM ROBBERY] Alerte police déclenchée aux coordonnées: %s, %s, %s',
+        print(string.format('[ZATM ATM ROBBERY] Alerte police/sheriff déclenchée aux coordonnées: %s, %s, %s',
             coords.x, coords.y, coords.z))
     end)
 
